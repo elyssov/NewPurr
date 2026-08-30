@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", "Manrope", Georgia, serif;
+  --font-sans: "Manrope", system-ui, sans-serif;
+
+  --color-bg: #1c1814;
+  --color-bg-elevated: #261f19;
+  --color-surface: #322820;
+  --color-fg: #f4efe6;
+  --color-muted: #b5a89a;
+  --color-subtle: #8a7c6e;
+  --color-accent: #e07a2f;
+  --color-accent-fg: #1c1814;
+  --color-border: color-mix(in oklab, #f4efe6 14%, transparent);
+  --color-border-strong: color-mix(in oklab, #f4efe6 24%, transparent);
+  --color-boredom: #c9a66b;
+  --color-attention: #d45b4a;
+  --color-mischief: #3d9a62;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
