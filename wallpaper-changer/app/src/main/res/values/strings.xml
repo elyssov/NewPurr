@@ -18,18 +18,24 @@
     <string name="double_tap">Двойной тап по рабочему столу — следующая картинка</string>
     <string name="next">Следующая картинка</string>
     <string-array name="interval_names">
+        <item>каждую минуту</item>
+        <item>каждые 3 минуты</item>
         <item>каждые 5 минут</item>
+        <item>каждые 10 минут</item>
         <item>каждые 15 минут</item>
+        <item>каждые полчаса</item>
         <item>каждый час</item>
-        <item>каждые 6 часов</item>
         <item>раз в сутки</item>
         <item>только вручную</item>
     </string-array>
     <integer-array name="interval_minutes">
+        <item>1</item>
+        <item>3</item>
         <item>5</item>
+        <item>10</item>
         <item>15</item>
+        <item>30</item>
         <item>60</item>
-        <item>360</item>
         <item>1440</item>
         <item>100000000</item>
     </integer-array>
