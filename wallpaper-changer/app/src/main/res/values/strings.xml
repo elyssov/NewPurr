@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ScrollWall</string>
+    <string name="wallpaper_description">Обои с прокруткой по экранам, без искажений</string>
+    <string name="pick">Выбрать картинку</string>
+    <string name="apply">Установить обои</string>
+    <string name="empty">Ничего ещё не выбрано</string>
+    <string name="hint">Картинка вписывается по высоте экрана, а её ширина растягивается на все рабочие столы: листаешь экраны — едешь над обоиной. Пропорции не меняются.</string>
+    <string name="updated">Обои обновлены</string>
+    <string name="load_error">Не удалось открыть картинку</string>
+    <string name="info">%1$d × %2$d · хватит на прокрутку шириной ≈ %3$s экрана</string>
+    <string name="info_narrow">%1$d × %2$d · картинка у́же экрана — прокрутки не будет, возьми пошире</string>
+    <string name="pick_folder">Выбрать папку</string>
+    <string name="folder_empty">В этой папке нет картинок</string>
+    <string name="folder_info">Папка «%1$s» · картинок: %2$d</string>
+    <string name="interval_label">Менять картинку</string>
+    <string name="shuffle">Вперемешку</string>
+    <string name="double_tap">Двойной тап по рабочему столу — следующая картинка</string>
+    <string name="next">Следующая картинка</string>
+    <string-array name="interval_names">
+        <item>каждую минуту</item>
+        <item>каждые 3 минуты</item>
+        <item>каждые 5 минут</item>
+        <item>каждые 10 минут</item>
+        <item>каждые 15 минут</item>
+        <item>каждые полчаса</item>
+        <item>каждый час</item>
+        <item>раз в сутки</item>
+        <item>только вручную</item>
+    </string-array>
+    <integer-array name="interval_minutes">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>1440</item>
+        <item>100000000</item>
+    </integer-array>
+</resources>
