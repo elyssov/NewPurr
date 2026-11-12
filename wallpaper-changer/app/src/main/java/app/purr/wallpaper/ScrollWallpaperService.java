@@ -1,12 +1,14 @@
 package app.purr.wallpaper;
 
 import android.app.WallpaperColors;
+import android.app.WallpaperManager;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -41,6 +43,9 @@ public class ScrollWallpaperService extends WallpaperService {
         private int width, height;
         private int loadToken;
         private boolean visible, destroyed;
+        private long lastTapTime;
+        private int lastTapX, lastTapY;
+        private float slop;
 
         /** 0 = left edge of the picture, 1 = right edge. Centered until the launcher reports. */
         private float xOffset = 0.5f;
@@ -60,6 +65,7 @@ public class ScrollWallpaperService extends WallpaperService {
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
             setOffsetNotificationsEnabled(true);
+            slop = 48 * getResources().getDisplayMetrics().density;
             Store.prefs(ScrollWallpaperService.this).registerOnSharedPreferenceChangeListener(this);
         }
 
@@ -74,7 +80,7 @@ public class ScrollWallpaperService extends WallpaperService {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-            reload();
+            if (Store.KEY_VERSION.equals(key)) reload();
         }
 
         @Override
@@ -97,9 +103,33 @@ public class ScrollWallpaperService extends WallpaperService {
             visible = v;
             main.removeCallbacks(previewTick);
             if (v) {
-                if (isPreview()) main.post(previewTick);
-                else draw();
+                if (isPreview()) {
+                    main.post(previewTick);
+                } else {
+                    draw();
+                    // Folder mode: time for the next picture? Checked whenever the wallpaper
+                    // comes back into view, so no alarms or background work are needed.
+                    if (Store.changeDue(ScrollWallpaperService.this)) next(false);
+                }
             }
+        }
+
+        @Override
+        public Bundle onCommand(String action, int x, int y, int z, Bundle extras, boolean result) {
+            if (WallpaperManager.COMMAND_TAP.equals(action) && !isPreview()) {
+                long now = SystemClock.uptimeMillis();
+                boolean isDouble = now - lastTapTime < 350
+                        && Math.hypot(x - lastTapX, y - lastTapY) < slop;
+                lastTapTime = isDouble ? 0 : now;
+                lastTapX = x;
+                lastTapY = y;
+                if (isDouble && Store.folderMode(ScrollWallpaperService.this)
+                        && Store.prefs(ScrollWallpaperService.this)
+                                .getBoolean(Store.KEY_DOUBLE_TAP, true)) {
+                    next(true);
+                }
+            }
+            return super.onCommand(action, x, y, z, extras, result);
         }
 
         @Override
@@ -118,6 +148,21 @@ public class ScrollWallpaperService extends WallpaperService {
             return colors;
         }
 
+        /**
+         * Moves the folder on to its next picture. Every engine (home, lock screen) then
+         * reloads through the version bump, so they always show the same picture; the
+         * due check is repeated here so that two engines do not both advance.
+         */
+        private void next(final boolean force) {
+            if (destroyed) return;
+            loader.execute(() -> {
+                ScrollWallpaperService c = ScrollWallpaperService.this;
+                synchronized (Store.class) {
+                    if ((force || Store.changeDue(c)) && Store.advance(c)) Store.bump(c);
+                }
+            });
+        }
+
         private void reload() {
             final int w = width, h = height;
             if (w == 0 || h == 0 || destroyed) return;
@@ -125,11 +170,15 @@ public class ScrollWallpaperService extends WallpaperService {
             loader.execute(() -> {
                 Bitmap b = null;
                 WallpaperColors c = null;
-                try {
-                    b = Store.decode(ScrollWallpaperService.this, w, h);
-                    if (b != null) c = WallpaperColors.fromBitmap(b);
-                } catch (Exception | OutOfMemoryError ignored) {
-                    // keep whatever is on screen
+                // A folder picture may have been deleted or be unreadable: try a few others.
+                for (int attempt = 0; attempt < 3 && b == null; attempt++) {
+                    try {
+                        b = Store.decode(ScrollWallpaperService.this, w, h);
+                        if (b != null) c = WallpaperColors.fromBitmap(b);
+                    } catch (Exception | OutOfMemoryError ignored) {
+                        // keep whatever is on screen
+                    }
+                    if (b == null && !Store.advance(ScrollWallpaperService.this)) break;
                 }
                 final Bitmap fb = b;
                 final WallpaperColors fc = c;
