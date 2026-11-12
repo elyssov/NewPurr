@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ScrollWall</string>
+    <string name="wallpaper_description">Обои с прокруткой по экранам, без искажений</string>
+    <string name="pick">Выбрать картинку</string>
+    <string name="apply">Установить обои</string>
+    <string name="empty">Картинка ещё не выбрана</string>
+    <string name="hint">Картинка вписывается по высоте экрана, а её ширина растягивается на все рабочие столы: листаешь экраны — едешь над обоиной. Пропорции не меняются.</string>
+    <string name="updated">Обои обновлены</string>
+    <string name="load_error">Не удалось открыть картинку</string>
+    <string name="info">%1$d × %2$d · хватит на прокрутку шириной ≈ %3$s экрана</string>
+    <string name="info_narrow">%1$d × %2$d · картинка у́же экрана — прокрутки не будет, возьми пошире</string>
+</resources>
